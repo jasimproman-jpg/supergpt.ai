@@ -1,0 +1,118 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SuperGPT AI</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#090b14;color:#f4f5ff;font-family:Arial,sans-serif;transition:.2s}
+header{text-align:center;padding:22px;border-bottom:1px solid #282b43}
+h1{color:#a99aff;margin:0}
+header p{color:#a6aac3}
+#chat{max-width:850px;margin:auto;padding:16px;height:65vh;overflow:auto}
+.msg{padding:13px 16px;border-radius:15px;margin:12px 0;max-width:90%;white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.5}
+.bot{background:#171b2c;border:1px solid #292e49}
+.user{background:#6550d9;margin-left:auto}
+form{display:flex;gap:8px;max-width:850px;margin:auto;padding:12px}
+input{flex:1;min-width:0;padding:15px;border-radius:12px;border:1px solid #363a58;background:#121523;color:white;font-size:16px}
+button{border:0;border-radius:12px;background:#8d79ff;color:white;font-weight:bold;padding:12px 18px;font-size:15px;cursor:pointer}
+#theme{display:block;margin:10px auto}
+footer{text-align:center;color:#8589a5;font-size:12px;padding:10px}
+body.light{background:#f3f4fc;color:#17182a}
+body.light header{border-color:#ddd}
+body.light header p,body.light footer{color:#666}
+body.light .bot{background:#fff;border-color:#ddd}
+body.light input{background:#fff;color:#17182a;border-color:#ccc}
+</style>
+</head>
+<body>
+<header>
+<h1>✦ SuperGPT AI</h1>
+<p>Your smart maths and knowledge assistant</p>
+<button id="theme" type="button">☀️ / 🌙 Change theme</button>
+</header>
+
+<main id="chat">
+<div class="msg bot">Hey! 👋 I'm SuperGPT AI.
+Ask me maths questions or anything else!</div>
+</main>
+
+<form id="form">
+<input id="question" placeholder="Ask SuperGPT anything..." autocomplete="off" required>
+<button id="send" type="submit">Send ➤</button>
+</form>
+<footer>SuperGPT AI · Powered by AI</footer>
+
+<script>
+const WORKER_URL = "https://supergbt-backend.jasimproman.workers.dev/";
+
+const chat = document.getElementById("chat");
+const input = document.getElementById("question");
+const form = document.getElementById("form");
+const send = document.getElementById("send");
+
+const messages = [];
+
+function addMessage(text, who) {
+  const d = document.createElement("div");
+  d.className = "msg " + who;
+  d.textContent = text;
+  chat.appendChild(d);
+  chat.scrollTop = chat.scrollHeight;
+  return d;
+}
+
+form.addEventListener("submit", async function(e) {
+  e.preventDefault();
+
+  const question = input.value.trim();
+  if (!question) return;
+
+  if (WORKER_URL === "PASTE_YOUR_WORKER_URL_HERE") {
+    addMessage("Please add your Cloudflare Worker URL in the code first.", "bot");
+    return;
+  }
+
+  addMessage(question, "user");
+  messages.push({role:"user", content:question});
+  input.value = "";
+  send.disabled = true;
+  send.textContent = "Thinking...";
+
+  const loading = addMessage("SuperGPT is thinking...", "bot");
+
+  try {
+    const response = await fetch(WORKER_URL, {
+      method: "POST",
+      headers: {"Content-Type":"application/json"},
+      body: JSON.stringify({messages: messages})
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || "The AI service had a problem.");
+    }
+
+    const reply = data.reply || "I couldn't make an answer.";
+    loading.textContent = reply;
+    messages.push({role:"assistant", content:reply});
+
+  } catch (error) {
+    loading.textContent = "Sorry! I couldn't connect. Check your Worker URL and settings, then try again.";
+    console.error(error);
+  } finally {
+    send.disabled = false;
+    send.textContent = "Send ➤";
+    input.focus();
+  }
+});
+
+document.getElementById("theme").addEventListener("click", function() {
+  document.body.classList.toggle("light");
+});
+</script>
+</body>
+</html>
