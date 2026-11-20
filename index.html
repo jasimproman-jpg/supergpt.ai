@@ -8,7 +8,6 @@
 <title>SuperGPT AI</title>
 <link rel="icon" type="image/png" href="logo.png">
 
-<!-- Google Sign-In library -->
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 
 <style>
@@ -21,52 +20,158 @@ body {
   background: #090b14;
   color: #f4f5ff;
   font-family: Arial, sans-serif;
-  transition: .2s;
+}
+
+button {
+  border: 0;
+  border-radius: 10px;
+  background: #8d79ff;
+  color: white;
+  font-weight: bold;
+  padding: 11px 15px;
+  cursor: pointer;
+}
+
+button:disabled {
+  opacity: .6;
+  cursor: not-allowed;
+}
+
+/* MAIN LAYOUT */
+
+.app {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* SIDEBAR */
+
+.sidebar {
+  width: 270px;
+  min-width: 270px;
+  background: #101321;
+  border-right: 1px solid #282b43;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+}
+
+.brand {
+  color: #a99aff;
+  font-size: 22px;
+  font-weight: bold;
+  margin-bottom: 22px;
+}
+
+.new-chat {
+  width: 100%;
+  text-align: left;
+  background: #27213f;
+  border: 1px solid #51427f;
+  margin-bottom: 22px;
+}
+
+.sidebar-heading {
+  color: #9298b5;
+  font-size: 13px;
+  margin-bottom: 12px;
+}
+
+#recent-chats {
+  overflow-y: auto;
+  flex: 1;
+}
+
+.chat-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 11px;
+  margin-bottom: 5px;
+  background: transparent;
+  color: #c9cbe0;
+  text-align: left;
+  font-weight: normal;
+  overflow: hidden;
+}
+
+.chat-item span {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.chat-item:hover,
+.chat-item.active {
+  background: #252941;
+}
+
+.sidebar-bottom {
+  border-top: 1px solid #282b43;
+  padding-top: 14px;
+  font-size: 12px;
+  color: #9298b5;
+}
+
+/* MAIN AREA */
+
+.main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
 }
 
 header {
-  text-align: center;
-  padding: 22px;
+  padding: 15px 20px;
   border-bottom: 1px solid #282b43;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
 }
 
-h1 {
+.header-title {
+  font-size: 20px;
+  font-weight: bold;
   color: #a99aff;
-  margin: 0;
 }
 
-header p {
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+#account-status {
   color: #a6aac3;
-}
-
-#theme {
-  display: block;
-  margin: 12px auto;
+  font-size: 13px;
 }
 
 #google-signin {
   display: flex;
   justify-content: center;
-  margin: 15px auto;
-  min-height: 40px;
-}
-
-#account-status {
-  color: #a6aac3;
-  font-size: 14px;
 }
 
 #signout {
   display: none;
-  margin: 10px auto;
 }
 
+#theme {
+  white-space: nowrap;
+}
+
+/* CHAT */
+
 #chat {
-  max-width: 850px;
-  margin: auto;
-  padding: 16px;
-  height: 65vh;
-  overflow: auto;
+  flex: 1;
+  overflow-y: auto;
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 20px;
 }
 
 .msg {
@@ -89,12 +194,15 @@ header p {
   margin-left: auto;
 }
 
+/* INPUT */
+
 form {
   display: flex;
   gap: 8px;
-  max-width: 850px;
-  margin: auto;
-  padding: 12px;
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 12px 20px 20px;
 }
 
 input {
@@ -108,65 +216,112 @@ input {
   font-size: 16px;
 }
 
-button {
-  border: 0;
-  border-radius: 12px;
-  background: #8d79ff;
-  color: white;
-  font-weight: bold;
-  padding: 12px 18px;
-  font-size: 15px;
-  cursor: pointer;
-}
-
-button:disabled {
-  opacity: .6;
-  cursor: not-allowed;
-}
-
 footer {
   text-align: center;
   color: #8589a5;
   font-size: 12px;
-  padding: 10px;
+  padding: 5px 10px 12px;
 }
+
+/* LIGHT THEME */
 
 body.light {
   background: #f3f4fc;
   color: #17182a;
 }
 
+body.light .sidebar {
+  background: #e8e9f5;
+  border-color: #ddd;
+}
+
+body.light .sidebar-bottom,
+body.light .sidebar-heading {
+  color: #666;
+}
+
+body.light .chat-item {
+  color: #303047;
+}
+
+body.light .chat-item:hover,
+body.light .chat-item.active {
+  background: #d7d8e9;
+}
+
 body.light header {
   border-color: #ddd;
 }
 
-body.light header p,
-body.light footer {
-  color: #666;
-}
-
 body.light .bot {
-  background: #fff;
+  background: white;
   border-color: #ddd;
 }
 
 body.light input {
-  background: #fff;
+  background: white;
   color: #17182a;
   border-color: #ccc;
 }
 
-@media (max-width: 500px) {
+body.light footer {
+  color: #666;
+}
+
+/* MOBILE */
+
+@media (max-width: 650px) {
+  .sidebar {
+    width: 190px;
+    min-width: 190px;
+    padding: 10px;
+  }
+
   header {
-    padding: 16px 10px;
+    padding: 12px;
+    flex-wrap: wrap;
+  }
+
+  .header-right {
+    flex-wrap: wrap;
+  }
+
+  #account-status {
+    font-size: 11px;
+  }
+
+  .header-title {
+    font-size: 17px;
+  }
+
+  #theme {
+    font-size: 12px;
+    padding: 9px;
+  }
+
+  #chat {
+    padding: 12px;
   }
 
   form {
     padding: 8px;
   }
+}
 
-  form button {
-    padding: 12px;
+@media (max-width: 420px) {
+  .sidebar {
+    width: 145px;
+    min-width: 145px;
+    padding: 7px;
+  }
+
+  .brand {
+    font-size: 17px;
+  }
+
+  .chat-item {
+    padding: 8px 5px;
+    font-size: 12px;
   }
 }
 </style>
@@ -174,48 +329,90 @@ body.light input {
 
 <body>
 
-<header>
-  <h1>✦ SuperGPT AI</h1>
-  <p>Your smart maths and knowledge assistant</p>
+<div class="app">
 
-  <button id="theme" type="button">
-    ☀️ / 🌙 Change theme
-  </button>
+  <!-- SIDEBAR -->
 
-  <div id="google-signin"></div>
+  <aside class="sidebar">
 
-  <p id="account-status">Loading Google Sign-In...</p>
+    <div class="brand">✦ SuperGPT</div>
 
-  <button id="signout" type="button">
-    Sign out
-  </button>
-</header>
+    <button class="new-chat" id="new-chat">
+      ＋ New Chat
+    </button>
 
-<main id="chat">
-  <div class="msg bot">
-    Hey! 👋 I'm SuperGPT AI.
-    Ask me maths questions or anything else!
-  </div>
-</main>
+    <div class="sidebar-heading">
+      RECENT CHATS
+    </div>
 
-<form id="form">
-  <input
-    id="question"
-    placeholder="Ask SuperGPT anything..."
-    autocomplete="off"
-    required
-  >
+    <div id="recent-chats"></div>
 
-  <button id="send" type="submit">Send ➤</button>
-</form>
+    <div class="sidebar-bottom">
+      SuperGPT AI<br>
+      Made by Jasim
+    </div>
 
-<footer>
-  SuperGPT AI · Powered by AI · Made by Jasim
-</footer>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+
+  <main class="main">
+
+    <header>
+
+      <div class="header-title">
+        ✦ SuperGPT AI
+      </div>
+
+      <div class="header-right">
+
+        <div id="google-signin"></div>
+
+        <span id="account-status">
+          Not signed in
+        </span>
+
+        <button id="signout" type="button">
+          Sign out
+        </button>
+
+        <button id="theme" type="button">
+          ☀️ / 🌙
+        </button>
+
+      </div>
+
+    </header>
+
+    <section id="chat"></section>
+
+    <form id="form">
+
+      <input
+        id="question"
+        placeholder="Ask SuperGPT anything..."
+        autocomplete="off"
+        required
+      >
+
+      <button id="send" type="submit">
+        Send ➤
+      </button>
+
+    </form>
+
+    <footer>
+      SuperGPT AI · Powered by AI · Made by Jasim
+    </footer>
+
+  </main>
+
+</div>
 
 <script>
+
 /* =================================
-   SUPERGPT CONFIGURATION
+   CONFIGURATION
 ================================= */
 
 const WORKER_URL =
@@ -223,6 +420,8 @@ const WORKER_URL =
 
 const GOOGLE_CLIENT_ID =
   "47086029047-ebqem67q3a34b3nupns2noqqspvqh4b0.apps.googleusercontent.com";
+
+const STORAGE_KEY = "supergpt_recent_chats";
 
 /* =================================
    ELEMENTS
@@ -233,22 +432,124 @@ const input = document.getElementById("question");
 const form = document.getElementById("form");
 const send = document.getElementById("send");
 
+const recentChats =
+  document.getElementById("recent-chats");
+
+const googleSignin =
+  document.getElementById("google-signin");
+
 const accountStatus =
   document.getElementById("account-status");
 
 const signoutButton =
   document.getElementById("signout");
 
-const messages = [];
-
 let googleCredential = null;
 let signedInUser = null;
 
 /* =================================
-   CHAT MESSAGE FUNCTION
+   CHAT STORAGE
+================================= */
+
+let conversations = [];
+
+try {
+  const saved = localStorage.getItem(STORAGE_KEY);
+  conversations = saved ? JSON.parse(saved) : [];
+
+  if (!Array.isArray(conversations)) {
+    conversations = [];
+  }
+} catch (error) {
+  conversations = [];
+}
+
+let currentChatId = null;
+
+function saveChats() {
+  try {
+    localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify(conversations)
+    );
+  } catch (error) {
+    console.error("Could not save chats:", error);
+  }
+}
+
+function getCurrentChat() {
+  return conversations.find(
+    item => item.id === currentChatId
+  );
+}
+
+/* =================================
+   CREATE NEW CHAT
+================================= */
+
+function createNewChat() {
+
+  const newConversation = {
+    id: Date.now().toString() +
+        Math.random().toString(36).slice(2),
+
+    title: "New Chat",
+
+    messages: [
+      {
+        role: "assistant",
+        content:
+          "Hey! 👋 I'm SuperGPT AI. Ask me maths questions or anything else!"
+      }
+    ]
+  };
+
+  conversations.unshift(newConversation);
+
+  currentChatId = newConversation.id;
+
+  saveChats();
+  renderChat();
+  renderRecentChats();
+
+  input.focus();
+}
+
+/* =================================
+   RENDER MESSAGES
+================================= */
+
+function renderChat() {
+
+  chat.innerHTML = "";
+
+  const conversation = getCurrentChat();
+
+  if (!conversation) return;
+
+  conversation.messages.forEach(message => {
+
+    const d = document.createElement("div");
+
+    d.className =
+      "msg " +
+      (message.role === "user" ? "user" : "bot");
+
+    d.textContent = message.content;
+
+    chat.appendChild(d);
+
+  });
+
+  chat.scrollTop = chat.scrollHeight;
+}
+
+/* =================================
+   ADD MESSAGE
 ================================= */
 
 function addMessage(text, who) {
+
   const d = document.createElement("div");
 
   d.className = "msg " + who;
@@ -261,13 +562,55 @@ function addMessage(text, who) {
 }
 
 /* =================================
+   RECENT CHAT SIDEBAR
+================================= */
+
+function renderRecentChats() {
+
+  recentChats.innerHTML = "";
+
+  conversations.forEach(conversation => {
+
+    const button = document.createElement("button");
+
+    button.className = "chat-item";
+
+    if (conversation.id === currentChatId) {
+      button.classList.add("active");
+    }
+
+    const icon = document.createElement("span");
+    icon.textContent = "💬";
+
+    const title = document.createElement("span");
+    title.textContent = conversation.title;
+
+    button.appendChild(icon);
+    button.appendChild(title);
+
+    button.addEventListener("click", function() {
+
+      currentChatId = conversation.id;
+
+      renderChat();
+      renderRecentChats();
+
+    });
+
+    recentChats.appendChild(button);
+
+  });
+}
+
+/* =================================
    GOOGLE SIGN-IN
 ================================= */
 
 async function handleGoogleSignIn(response) {
+
   try {
-    accountStatus.textContent =
-      "Checking your Google account...";
+
+    accountStatus.textContent = "Checking account...";
 
     const result = await fetch(
       WORKER_URL + "/auth/google",
@@ -296,34 +639,31 @@ async function handleGoogleSignIn(response) {
     signedInUser = data.user;
 
     accountStatus.textContent =
-      "Signed in as " +
+      "Hi, " +
       (signedInUser.name || "Google user");
 
+    googleSignin.style.display = "none";
     signoutButton.style.display = "block";
 
-    addMessage(
-      "Welcome, " +
-      (signedInUser.name || "Google user") +
-      "! You are signed in.",
-      "bot"
-    );
-
   } catch (error) {
+
     googleCredential = null;
     signedInUser = null;
 
     accountStatus.textContent =
-      "Sign-in failed. Please try again.";
+      "Sign-in failed. Try again.";
 
     console.error("Google sign-in error:", error);
+
   }
 }
 
 /* =================================
-   INITIALIZE GOOGLE BUTTON
+   INITIALIZE GOOGLE
 ================================= */
 
 function initializeGoogleSignIn() {
+
   if (!window.google || !window.google.accounts) {
     accountStatus.textContent =
       "Google Sign-In could not load.";
@@ -332,12 +672,15 @@ function initializeGoogleSignIn() {
   }
 
   google.accounts.id.initialize({
+
     client_id: GOOGLE_CLIENT_ID,
+
     callback: handleGoogleSignIn
+
   });
 
   google.accounts.id.renderButton(
-    document.getElementById("google-signin"),
+    googleSignin,
     {
       theme: "filled_blue",
       size: "large",
@@ -345,32 +688,32 @@ function initializeGoogleSignIn() {
       text: "signin_with"
     }
   );
-
-  accountStatus.textContent = "Not signed in";
 }
 
-/* =================================
-   WAIT FOR GOOGLE LIBRARY
-================================= */
-
 window.addEventListener("load", function() {
+
   let attempts = 0;
 
   const checkGoogle = setInterval(function() {
+
     attempts++;
 
     if (window.google && window.google.accounts) {
+
       clearInterval(checkGoogle);
       initializeGoogleSignIn();
 
     } else if (attempts >= 30) {
+
       clearInterval(checkGoogle);
 
       accountStatus.textContent =
-        "Google Sign-In failed to load. Check your internet.";
+        "Google Sign-In could not load.";
+
     }
 
   }, 300);
+
 });
 
 /* =================================
@@ -378,36 +721,64 @@ window.addEventListener("load", function() {
 ================================= */
 
 signoutButton.addEventListener("click", function() {
+
   googleCredential = null;
   signedInUser = null;
 
   accountStatus.textContent = "Not signed in";
+
   signoutButton.style.display = "none";
+  googleSignin.style.display = "flex";
 
   if (window.google && window.google.accounts) {
     google.accounts.id.disableAutoSelect();
   }
 
-  addMessage("You have signed out.", "bot");
 });
+
+/* =================================
+   NEW CHAT BUTTON
+================================= */
+
+document.getElementById("new-chat")
+  .addEventListener("click", createNewChat);
 
 /* =================================
    AI CHAT
 ================================= */
 
 form.addEventListener("submit", async function(e) {
+
   e.preventDefault();
 
   const question = input.value.trim();
 
-  if (!question) return;
+  if (!question || send.disabled) return;
+
+  if (!getCurrentChat()) {
+    createNewChat();
+  }
+
+  const conversation = getCurrentChat();
 
   addMessage(question, "user");
 
-  messages.push({
+  conversation.messages.push({
     role: "user",
     content: question
   });
+
+  if (conversation.title === "New Chat") {
+
+    conversation.title =
+      question.length > 28
+        ? question.slice(0, 28) + "..."
+        : question;
+
+  }
+
+  saveChats();
+  renderRecentChats();
 
   input.value = "";
 
@@ -420,8 +791,13 @@ form.addEventListener("submit", async function(e) {
   );
 
   try {
+
     const requestBody = {
-      messages: messages
+      messages: conversation.messages
+        .filter(message =>
+          message.role === "user" ||
+          message.role === "assistant"
+        )
     };
 
     if (googleCredential) {
@@ -429,6 +805,7 @@ form.addEventListener("submit", async function(e) {
     }
 
     const response = await fetch(WORKER_URL, {
+
       method: "POST",
 
       headers: {
@@ -436,13 +813,14 @@ form.addEventListener("submit", async function(e) {
       },
 
       body: JSON.stringify(requestBody)
+
     });
 
     const data = await response.json();
 
     if (!response.ok) {
       throw new Error(
-        data.error || "The AI service had a problem."
+        data.error || "AI service problem."
       );
     }
 
@@ -451,34 +829,59 @@ form.addEventListener("submit", async function(e) {
 
     loading.textContent = reply;
 
-    messages.push({
+    conversation.messages.push({
       role: "assistant",
       content: reply
     });
 
+    saveChats();
+
   } catch (error) {
+
     loading.textContent =
       "Sorry! I couldn't connect. Please try again.";
 
     console.error("Chat error:", error);
 
   } finally {
+
     send.disabled = false;
     send.textContent = "Send ➤";
+
     input.focus();
+
   }
+
 });
 
 /* =================================
    THEME SWITCHER
 ================================= */
 
-document.getElementById("theme").addEventListener(
-  "click",
-  function() {
+document.getElementById("theme")
+  .addEventListener("click", function() {
+
     document.body.classList.toggle("light");
-  }
-);
+
+  });
+
+/* =================================
+   STARTUP
+================================= */
+
+if (conversations.length > 0) {
+
+  currentChatId = conversations[0].id;
+
+  renderChat();
+  renderRecentChats();
+
+} else {
+
+  createNewChat();
+
+}
+
 </script>
 
 </body>
