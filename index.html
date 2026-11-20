@@ -6,112 +6,168 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <title>SuperGPT AI</title>
-
-<!-- SuperGPT AI browser tab logo -->
 <link rel="icon" type="image/png" href="logo.png">
 
+<!-- Google Sign-In library -->
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+
 <style>
-*{box-sizing:border-box}
-
-body{
-  margin:0;
-  background:#090b14;
-  color:#f4f5ff;
-  font-family:Arial,sans-serif;
-  transition:.2s;
+* {
+  box-sizing: border-box;
 }
 
-header{
-  text-align:center;
-  padding:22px;
-  border-bottom:1px solid #282b43;
+body {
+  margin: 0;
+  background: #090b14;
+  color: #f4f5ff;
+  font-family: Arial, sans-serif;
+  transition: .2s;
 }
 
-h1{color:#a99aff;margin:0}
-header p{color:#a6aac3}
-
-#chat{
-  max-width:850px;
-  margin:auto;
-  padding:16px;
-  height:65vh;
-  overflow:auto;
+header {
+  text-align: center;
+  padding: 22px;
+  border-bottom: 1px solid #282b43;
 }
 
-.msg{
-  padding:13px 16px;
-  border-radius:15px;
-  margin:12px 0;
-  max-width:90%;
-  white-space:pre-wrap;
-  overflow-wrap:anywhere;
-  line-height:1.5;
+h1 {
+  color: #a99aff;
+  margin: 0;
 }
 
-.bot{
-  background:#171b2c;
-  border:1px solid #292e49;
+header p {
+  color: #a6aac3;
 }
 
-.user{
-  background:#6550d9;
-  margin-left:auto;
+#theme {
+  display: block;
+  margin: 12px auto;
 }
 
-form{
-  display:flex;
-  gap:8px;
-  max-width:850px;
-  margin:auto;
-  padding:12px;
+#google-signin {
+  display: flex;
+  justify-content: center;
+  margin: 15px auto;
+  min-height: 40px;
 }
 
-input{
-  flex:1;
-  min-width:0;
-  padding:15px;
-  border-radius:12px;
-  border:1px solid #363a58;
-  background:#121523;
-  color:white;
-  font-size:16px;
+#account-status {
+  color: #a6aac3;
+  font-size: 14px;
 }
 
-button{
-  border:0;
-  border-radius:12px;
-  background:#8d79ff;
-  color:white;
-  font-weight:bold;
-  padding:12px 18px;
-  font-size:15px;
-  cursor:pointer;
+#signout {
+  display: none;
+  margin: 10px auto;
 }
 
-button:disabled{opacity:.6;cursor:not-allowed}
-
-#theme{display:block;margin:10px auto}
-
-footer{
-  text-align:center;
-  color:#8589a5;
-  font-size:12px;
-  padding:10px;
+#chat {
+  max-width: 850px;
+  margin: auto;
+  padding: 16px;
+  height: 65vh;
+  overflow: auto;
 }
 
-body.light{
-  background:#f3f4fc;
-  color:#17182a;
+.msg {
+  padding: 13px 16px;
+  border-radius: 15px;
+  margin: 12px 0;
+  max-width: 90%;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  line-height: 1.5;
 }
 
-body.light header{border-color:#ddd}
-body.light header p,body.light footer{color:#666}
-body.light .bot{background:#fff;border-color:#ddd}
+.bot {
+  background: #171b2c;
+  border: 1px solid #292e49;
+}
 
-body.light input{
-  background:#fff;
-  color:#17182a;
-  border-color:#ccc;
+.user {
+  background: #6550d9;
+  margin-left: auto;
+}
+
+form {
+  display: flex;
+  gap: 8px;
+  max-width: 850px;
+  margin: auto;
+  padding: 12px;
+}
+
+input {
+  flex: 1;
+  min-width: 0;
+  padding: 15px;
+  border-radius: 12px;
+  border: 1px solid #363a58;
+  background: #121523;
+  color: white;
+  font-size: 16px;
+}
+
+button {
+  border: 0;
+  border-radius: 12px;
+  background: #8d79ff;
+  color: white;
+  font-weight: bold;
+  padding: 12px 18px;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+button:disabled {
+  opacity: .6;
+  cursor: not-allowed;
+}
+
+footer {
+  text-align: center;
+  color: #8589a5;
+  font-size: 12px;
+  padding: 10px;
+}
+
+body.light {
+  background: #f3f4fc;
+  color: #17182a;
+}
+
+body.light header {
+  border-color: #ddd;
+}
+
+body.light header p,
+body.light footer {
+  color: #666;
+}
+
+body.light .bot {
+  background: #fff;
+  border-color: #ddd;
+}
+
+body.light input {
+  background: #fff;
+  color: #17182a;
+  border-color: #ccc;
+}
+
+@media (max-width: 500px) {
+  header {
+    padding: 16px 10px;
+  }
+
+  form {
+    padding: 8px;
+  }
+
+  form button {
+    padding: 12px;
+  }
 }
 </style>
 </head>
@@ -121,12 +177,25 @@ body.light input{
 <header>
   <h1>✦ SuperGPT AI</h1>
   <p>Your smart maths and knowledge assistant</p>
-  <button id="theme" type="button">☀️ / 🌙 Change theme</button>
+
+  <button id="theme" type="button">
+    ☀️ / 🌙 Change theme
+  </button>
+
+  <div id="google-signin"></div>
+
+  <p id="account-status">Loading Google Sign-In...</p>
+
+  <button id="signout" type="button">
+    Sign out
+  </button>
 </header>
 
 <main id="chat">
-  <div class="msg bot">Hey! 👋 I'm SuperGPT AI.
-Ask me maths questions or anything else!</div>
+  <div class="msg bot">
+    Hey! 👋 I'm SuperGPT AI.
+    Ask me maths questions or anything else!
+  </div>
 </main>
 
 <form id="form">
@@ -136,44 +205,212 @@ Ask me maths questions or anything else!</div>
     autocomplete="off"
     required
   >
+
   <button id="send" type="submit">Send ➤</button>
 </form>
 
-<footer>SuperGPT AI · Powered by AI · Made by Jasim</footer>
+<footer>
+  SuperGPT AI · Powered by AI · Made by Jasim
+</footer>
 
 <script>
+/* =================================
+   SUPERGPT CONFIGURATION
+================================= */
+
 const WORKER_URL =
   "https://supergbt-backend.jasimproman.workers.dev";
+
+const GOOGLE_CLIENT_ID =
+  "47086029047-ebqem67q3a34b3nupns2noqqspvqh4b0.apps.googleusercontent.com";
+
+/* =================================
+   ELEMENTS
+================================= */
 
 const chat = document.getElementById("chat");
 const input = document.getElementById("question");
 const form = document.getElementById("form");
 const send = document.getElementById("send");
 
+const accountStatus =
+  document.getElementById("account-status");
+
+const signoutButton =
+  document.getElementById("signout");
+
 const messages = [];
+
+let googleCredential = null;
+let signedInUser = null;
+
+/* =================================
+   CHAT MESSAGE FUNCTION
+================================= */
 
 function addMessage(text, who) {
   const d = document.createElement("div");
+
   d.className = "msg " + who;
   d.textContent = text;
+
   chat.appendChild(d);
   chat.scrollTop = chat.scrollHeight;
+
   return d;
 }
+
+/* =================================
+   GOOGLE SIGN-IN
+================================= */
+
+async function handleGoogleSignIn(response) {
+  try {
+    accountStatus.textContent =
+      "Checking your Google account...";
+
+    const result = await fetch(
+      WORKER_URL + "/auth/google",
+      {
+        method: "POST",
+
+        headers: {
+          "Content-Type": "application/json"
+        },
+
+        body: JSON.stringify({
+          credential: response.credential
+        })
+      }
+    );
+
+    const data = await result.json();
+
+    if (!result.ok || !data.success) {
+      throw new Error(
+        data.error || "Sign-in failed."
+      );
+    }
+
+    googleCredential = response.credential;
+    signedInUser = data.user;
+
+    accountStatus.textContent =
+      "Signed in as " +
+      (signedInUser.name || "Google user");
+
+    signoutButton.style.display = "block";
+
+    addMessage(
+      "Welcome, " +
+      (signedInUser.name || "Google user") +
+      "! You are signed in.",
+      "bot"
+    );
+
+  } catch (error) {
+    googleCredential = null;
+    signedInUser = null;
+
+    accountStatus.textContent =
+      "Sign-in failed. Please try again.";
+
+    console.error("Google sign-in error:", error);
+  }
+}
+
+/* =================================
+   INITIALIZE GOOGLE BUTTON
+================================= */
+
+function initializeGoogleSignIn() {
+  if (!window.google || !window.google.accounts) {
+    accountStatus.textContent =
+      "Google Sign-In could not load.";
+
+    return;
+  }
+
+  google.accounts.id.initialize({
+    client_id: GOOGLE_CLIENT_ID,
+    callback: handleGoogleSignIn
+  });
+
+  google.accounts.id.renderButton(
+    document.getElementById("google-signin"),
+    {
+      theme: "filled_blue",
+      size: "large",
+      shape: "pill",
+      text: "signin_with"
+    }
+  );
+
+  accountStatus.textContent = "Not signed in";
+}
+
+/* =================================
+   WAIT FOR GOOGLE LIBRARY
+================================= */
+
+window.addEventListener("load", function() {
+  let attempts = 0;
+
+  const checkGoogle = setInterval(function() {
+    attempts++;
+
+    if (window.google && window.google.accounts) {
+      clearInterval(checkGoogle);
+      initializeGoogleSignIn();
+
+    } else if (attempts >= 30) {
+      clearInterval(checkGoogle);
+
+      accountStatus.textContent =
+        "Google Sign-In failed to load. Check your internet.";
+    }
+
+  }, 300);
+});
+
+/* =================================
+   SIGN OUT
+================================= */
+
+signoutButton.addEventListener("click", function() {
+  googleCredential = null;
+  signedInUser = null;
+
+  accountStatus.textContent = "Not signed in";
+  signoutButton.style.display = "none";
+
+  if (window.google && window.google.accounts) {
+    google.accounts.id.disableAutoSelect();
+  }
+
+  addMessage("You have signed out.", "bot");
+});
+
+/* =================================
+   AI CHAT
+================================= */
 
 form.addEventListener("submit", async function(e) {
   e.preventDefault();
 
   const question = input.value.trim();
+
   if (!question) return;
 
   addMessage(question, "user");
+
   messages.push({
     role: "user",
     content: question
   });
 
   input.value = "";
+
   send.disabled = true;
   send.textContent = "Thinking...";
 
@@ -183,14 +420,22 @@ form.addEventListener("submit", async function(e) {
   );
 
   try {
+    const requestBody = {
+      messages: messages
+    };
+
+    if (googleCredential) {
+      requestBody.idToken = googleCredential;
+    }
+
     const response = await fetch(WORKER_URL, {
       method: "POST",
+
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({
-        messages: messages
-      })
+
+      body: JSON.stringify(requestBody)
     });
 
     const data = await response.json();
@@ -213,9 +458,9 @@ form.addEventListener("submit", async function(e) {
 
   } catch (error) {
     loading.textContent =
-      "Sorry! I couldn't connect. Please check your internet and try again.";
+      "Sorry! I couldn't connect. Please try again.";
 
-    console.error(error);
+    console.error("Chat error:", error);
 
   } finally {
     send.disabled = false;
@@ -223,6 +468,10 @@ form.addEventListener("submit", async function(e) {
     input.focus();
   }
 });
+
+/* =================================
+   THEME SWITCHER
+================================= */
 
 document.getElementById("theme").addEventListener(
   "click",
